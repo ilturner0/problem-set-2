@@ -16,3 +16,37 @@ import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.model_selection import StratifiedKFold as KFold_strat
 from sklearn.tree import DecisionTreeClassifier as DTC
+
+def do_decision_tree(train, test):
+    '''
+    Performs decision tree classification
+
+    Parameters:
+          train : dataframe
+               The portion of the dataset used for model training
+          test : dataframe
+               The portion of the dataset used for model testing 
+    
+    Returns:
+          train : dataframe
+               The training portion of df_arrests.
+          test : dataframe
+               The test dataframe that the regression model performed predictions with.
+          prob_felony_charge_dt : Array
+               The probability of each charge being a felony as determined by the model.
+
+
+    '''
+    param_grid_dt={'max_depth':[1, 10, 20]}
+    dt_model=DTC()
+    gs_cv_dt=GridSearchCV(estimator=dt_model, param_grid=param_grid_dt, cv=5)
+    gs_cv_dt.fit(train[['num_fel_arrests_last_year', 'current_charge_felony']], train['charge_degree'])
+    print(f"Best depth is: {gs_cv_dt.best_params_}\n The amount of regularization is in the middle of the 3 values.")
+
+    test['pred_dt']=gs_cv_dt.predict(test[['num_fel_arrests_last_year', 'current_charge_felony']])
+    probs_dt=gs_cv_dt.predict_proba(test[['num_fel_arrests_last_year', 'current_charge_felony']])
+    prob_felony_charge_dt=probs_dt[:, 0]
+    print(gs_cv_dt.best_estimator_.classes_)
+    #train.to_csv(r'data/df_arrests_train.csv')
+    #test.to_csv(r'data/df_arrests_tested.csv')
+    return train, test, prob_felony_charge_dt

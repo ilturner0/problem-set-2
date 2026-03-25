@@ -15,11 +15,45 @@ PART 3: Logistic Regression
 # Import any further packages you may need for PART 3
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV, ParameterGrid
 from sklearn.model_selection import StratifiedKFold as KFold_strat
 from sklearn.linear_model import LogisticRegression as lr
 
 
+
 # Your code here
+def do_log_reg(df_arrests):
+    '''
+    Performs logistic regression using gridsearch with 5 fold crossvalidation.
+
+    Parameters:
+        df_arrests : dataframe
+    
+    Returns:
+        df_arrests_train : dataframe
+            The training portion of df_arrests.
+        df_arrests_test : dataframe
+            The test dataframe that the regression model performed predictions with.
+        prob_felony_charge_lr : Array
+            The probability of each charge being a felony as determined by the model.
+    '''
+
+    df_arrests_train, df_arrests_test=train_test_split(df_arrests, test_size=0.3, shuffle=True, stratify=df_arrests['charge_degree'])
+    features=['num_fel_arrests_last_year', 'current_charge_felony']
+    param_grid={"C":[1, 10, 20]}
+    lr_model=lr()
+    gs_cv=GridSearchCV(estimator=lr_model, param_grid=param_grid, cv=5)
+    gs_cv.fit(df_arrests_train[['num_fel_arrests_last_year', 'current_charge_felony']], df_arrests_train['charge_degree'])
+    print(f"Optimal C value is: {gs_cv.best_params_}\n It has the most regularization of all C values passed.\n Accuracy is {gs_cv.best_score_}")
+    df_arrests_test['pred_lr']=gs_cv.predict(df_arrests_test[['num_fel_arrests_last_year', 'current_charge_felony']])
+    probs_lr=gs_cv.predict_proba(df_arrests_test[['num_fel_arrests_last_year', 'current_charge_felony']])
+    #print(type(probs_lr[0]))
+    #print(probs_lr[:,0])
+    prob_felony_charge_lr=probs_lr[:, 0]
+
+    print(gs_cv.best_estimator_.classes_)
+    return df_arrests_train, df_arrests_test, prob_felony_charge_lr
+    
+
 
 
