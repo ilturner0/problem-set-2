@@ -48,6 +48,9 @@ def do_decision_tree(train, test):
     prob_felony_charge_dt=probs_dt[:, 1]
     #print(gs_cv_dt.classes_)
     print(gs_cv_dt.best_score_)
+    train.drop(columns=['date_diff', 'id_diff'], inplace=True)
+    test.drop(columns=['date_diff', 'id_diff'], inplace=True)
+
     train.to_csv(r'data/df_arrests_train.csv')
     test.to_csv(r'data/df_arrests_tested.csv')
     return train, test, prob_felony_charge_dt
