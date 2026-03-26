@@ -45,17 +45,18 @@ def calibration_plot(y_true, y_prob, n_bins=10):
     plt.title("Calibration Plot")
     plt.legend(loc="best")
     plt.show()
+    print(f"Which model is more calibrated?\n It seems that the logistic regression model is more calibrated, though both models score similarly.")
 
 def do_plots(y_test, y_prob):
     '''
     Prepare data for and create calibration plots. Takes the classes in y_test and assigns binary values to them for use in calibration_plot
 
     Parameters:
-        y_test : The target column ('charge_degree')
+        y_test : The target column ('y')
         y_prob : The probability that the charge is a felony
     '''
-    binary=y_test.str.replace('felony', '1') 
-    binary=binary.str.replace('misdemeanor', '0')
-    binary=binary.astype('int')
-    binary=binary.astype('bool')
-    calibration_plot(binary, y_prob, n_bins=5)
+    #binary=y_test.str.replace('felony', '1') 
+    #binary=binary.str.replace('misdemeanor', '0')
+    #binary=binary.astype('int')
+    #binary=binary.astype('bool')
+    calibration_plot(y_test, y_prob, n_bins=5)

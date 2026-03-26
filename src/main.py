@@ -36,8 +36,11 @@ def main():
     full_train, full_test, probs_dt=part4_decision_tree.do_decision_tree(arrests_train, arrests_test)
 
     # PART 5: Call functions/instanciate objects from calibration_plot
-    part5_calibration_plot.do_plots(arrests_test['charge_degree'], y_prob=probs_lr)
-    part5_calibration_plot.do_plots(arrests_test['charge_degree'], y_prob=probs_dt)
+    #part5_calibration_plot.do_plots(arrests_test['y'], y_prob=probs_lr)
+    part5_calibration_plot.calibration_plot(arrests_test['y'], probs_lr, n_bins=5)
+    #part5_calibration_plot.do_plots(arrests_test['y'], y_prob=probs_dt)
+    part5_calibration_plot.calibration_plot(arrests_test['y'], probs_dt, n_bins=5)
+
 
 
 
